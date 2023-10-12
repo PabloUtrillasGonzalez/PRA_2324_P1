@@ -1,4 +1,5 @@
 #include <ostream>
+#include <iostream>
 #include <vector>
 #include "List.h"
 
@@ -17,7 +18,11 @@ class ListArray : public List<T> {
     public:
         // miembros públicos, incluidos los heredados de List<T>
 	// Constructor y Destructor
-    	ListArray(){arr = new T[MINSIZE];};
+    	ListArray(){
+		max = MINSIZE;
+		n = 0;
+		arr = new T[MINSIZE];
+	};
 	~ListArray(){delete[] arr;};
 
 	T operator[](int pos){
@@ -28,9 +33,16 @@ class ListArray : public List<T> {
 		}
 	}
 
-	friend ostream&operator<<(ostream &out, const ListArray<T> &list){
-		for(int i = 0; i < list.n ; i++){
-			out << list[i] << " ";
+	friend std::ostream& operator<<(std::ostream &out, const ListArray<T> &list){
+		out << "List => [";
+		if(list.n > 0){
+			for(int i = 0; i < list.n ; i++){
+				out << "\n\t" << list.arr[i];
+			}
+
+			out << "\n]";
+		}else{
+			out << "]";
 		}
 		return out;
 	}
@@ -52,25 +64,24 @@ class ListArray : public List<T> {
 				throw out_of_range("Posicion invalida");
 			}
 
-			if((e.size() + n) < max){
-				resize(n + 1 + e.size());
+			if((n + 1) > max){
+				resize(n + 1);
 			}
 
 			
 			//Creamos hueco para el array haciendo que el array principal se mueva a la derech
 			//la cantidad de elementos que el que insertamos tenga, a excepción de si se va a insertar al final
 			
-			if(pos >= n){
-				for(int i = n,x = 0; i < e.size() ; i++,x++){
-					arr[i] = e.get[x];
-				}
+			if(pos > n-1 || n == 0){
+				arr[n] = e;
 			}else{
-				for(int i = 0,x = pos; x <= n ;i++,x++){
-					arr[x] = arr[n+i];
-					arr[x] = e[i];
-					n++;
+				for(int i = 0,x = n,m = pos; m < n ;i++,m++){
+					arr[x-i] = arr[(x-i)-1];
 				}
+
+				arr[pos] = e;
 			}
+			n+=1;
 		
 		}
 
@@ -83,14 +94,18 @@ class ListArray : public List<T> {
 		}
 
                 T remove(int pos) override{
-			if(pos < 0 || pos >=max){
+			if(pos < 0 || pos >=max || n == 0 || pos >=n){
                                 throw out_of_range("Posicion invalida");
                         }
 			
 			T elemElim = arr[pos];
                         //Movemos el array desde la posc hacia la izq
-                        for(int i = pos; i < n-2 ;i++){
-                        	arr[i] = arr[i+1];
+                        if(pos == n-1){
+				arr[pos] = -1;
+			}else{
+				for(int i = pos; i < n-1 ;i++){
+                        		arr[i] = arr[i+1];
+				}
 			}
 			n--;
 
@@ -98,14 +113,14 @@ class ListArray : public List<T> {
 		}
 
                 T get(int pos) override{
-			if(pos < 0 || pos >=max){
+			if(pos < 0 || pos >=max || pos >= n){
                                 throw out_of_range("Posicion invalida");
                         }
 			return arr[pos];
 		}
 
                 int search(T e) override{
-			for(int i = 0; i < n-1 ;i++){
+			for(int i = 0; i < n ;i++){
 				if(arr[i] == e){
 					return i;	
 				}
