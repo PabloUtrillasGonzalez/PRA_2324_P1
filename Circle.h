@@ -17,54 +17,24 @@ class Circle : public Shape{
 
 	public:
 	
-	Circle(){
-		this->center = Point2D(0.0,0.0);
-		this->radius = 1;
-		this->color = "red";
+	Circle();
+	Circle(string color, Point2D center, double radius);
 
-	}
-	Circle(string color, Point2D center, double radius){
-		this->color = color;
-		this->center = center;
-		this->radius = radius;
+	Point2D get_center()const;
 
-	}
+	void set_center(Point2D p);
 
-	Point2D get_center()const{
-		return center;
-	}
+	double get_radius()const;
 
-	void set_center(Point2D p){
-		this->center = p;
-	}
+	void set_radius(double r);
 
-	double get_radius()const{
-		return radius;
-	}
+	friend std::ostream&operator<<(std::ostream &out, const Circle &c);
 
-	void set_radius(double r){
-		this->radius = r;
-	}
+        double area() const override;
 
-	friend std::ostream&operator<<(std::ostream &out, const Circle &c){
-		out << c.get_center() << " " << c.get_radius();
-		return out;
-	}
+        double perimeter() const override;
 
-        double area() const override{
-		return (pow(this->radius,2) * M_PI); // Radio^2 * PI
-	}
+        void translate(double incX, double incY) override;
 
-        double perimeter() const override{
-		return ((radius*2) * M_PI); // Diametro por PI
-	}
-
-        void translate(double incX, double incY) override{
-		// No idea que hace esto
-		//this->center.translate(incX,incY);	
-	}
-
-        void print() override{
-		cout << "Circulo con Radio:" << radius << " y Centro:" << center;
-	}
+        void print() override;
 };
